@@ -161,7 +161,62 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   /* ==========================================
-     5) DASHBOARD LOCAL DE VISITANTES
+     5) EXPLORADOR DEL MEDIDOR Y MODELOS
+     ========================================== */
+  const modelos = {
+    "G1.6": ["0.016 – 2.5 m³/h", "1.5", "72 días"],
+    "G4": ["0.04 – 6.0 m³/h", "1.5", "72 días"],
+    "G6": ["0.06 – 10 m³/h", "1.5", "72 días"],
+    "G10": ["0.1 – 16 m³/h", "1.5", "72 días"],
+    "G16": ["0.16 – 25 m³/h", "1.5", "72 días"],
+    "G25": ["0.25 – 40 m³/h", "1.5", "72 días"]
+  };
+  const botonesModelo = document.querySelectorAll(".modelo-medidor");
+
+  if (botonesModelo.length > 0) {
+    const modeloSeleccionado = document.getElementById("modeloSeleccionado");
+    const rangoModelo = document.getElementById("rangoModelo");
+    const claseModelo = document.getElementById("claseModelo");
+    const registrosModelo = document.getElementById("registrosModelo");
+
+    botonesModelo.forEach(function (boton) {
+      boton.addEventListener("click", function () {
+        const datos = modelos[boton.dataset.modelo];
+        botonesModelo.forEach(function (modelo) { modelo.classList.remove("activo"); });
+        boton.classList.add("activo");
+        modeloSeleccionado.textContent = boton.dataset.modelo;
+        rangoModelo.textContent = datos[0];
+        claseModelo.textContent = datos[1];
+        registrosModelo.textContent = datos[2];
+      });
+    });
+  }
+
+  const puntosMedidor = document.querySelectorAll(".punto-medidor");
+  const detallesMedidor = {
+    "Pantalla": "Muestra la lectura actual de consumo de forma clara y directa.",
+    "Antena": "Permite enviar los datos del medidor para su consulta remota.",
+    "Botón azul": "Acceso a la información del usuario y sus lecturas.",
+    "Botón naranja": "Navegación rápida entre funciones del equipo.",
+    "Puerto óptico": "Conecta con el medidor localmente para diagnóstico y configuración."
+  };
+
+  if (puntosMedidor.length > 0) {
+    const detalleTitulo = document.getElementById("detalleTitulo");
+    const detalleTexto = document.getElementById("detalleTexto");
+
+    puntosMedidor.forEach(function (punto) {
+      punto.addEventListener("click", function () {
+        puntosMedidor.forEach(function (elemento) { elemento.classList.remove("seleccionado"); });
+        punto.classList.add("seleccionado");
+        detalleTitulo.textContent = punto.dataset.detalle;
+        detalleTexto.textContent = detallesMedidor[punto.dataset.detalle];
+      });
+    });
+  }
+
+  /* ==========================================
+     6) DASHBOARD LOCAL DE VISITANTES
      ========================================== */
   const tablaVisitantes = document.getElementById("tablaVisitantes");
 

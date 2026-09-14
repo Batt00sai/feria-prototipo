@@ -10,18 +10,19 @@
 
   <!-- ===== ENCABEZADO / HERO ===== -->
   <header class="encabezado-presentacion">
-    <div class="barra-superior"><span class="logo-mini">MS</span><span>MeteRSit</span><span class="barra-paso">PRESENTACIÓN · 02</span></div>
+    <div class="barra-superior"><a class="logo-mini" href="index.html" aria-label="Volver al registro">MS</a><span>MeteRSit</span><span class="barra-paso">PRESENTACIÓN · 02</span></div>
     <div class="hero-contenido">
-      <p class="eyebrow">Medición que mueve decisiones</p>
-      <h1>El futuro se mide <span class="marca">mejor.</span></h1>
-      <p class="subtitulo">Soluciones inteligentes para medir con precisión, comunicar con claridad y proteger lo que importa.</p>
-      <a href="#tecnologia" class="boton-principal boton-hero">Comenzar recorrido <span aria-hidden="true">↓</span></a>
+      <p class="eyebrow">Tecnología inteligente para la medición del gas</p>
+      <h1>La precisión<br><span class="marca">en movimiento.</span></h1>
+      <p class="subtitulo">Descubre cómo una lectura se convierte en información útil para hogares, negocios y operaciones industriales.</p>
+      <div class="hero-medidor" aria-hidden="true"><span class="hero-medidor-marca">MS</span><span class="hero-medidor-pantalla">04.82 <small>m³</small></span><span class="hero-medidor-luz"></span></div>
+      <a href="#tecnologia" class="boton-principal boton-hero">Descubrir <span aria-hidden="true">↓</span></a>
     </div>
   </header>
 
   <!-- ===== CIFRAS DESTACADAS ===== -->
   <nav class="indice-presentacion" aria-label="Secciones de la presentación">
-    <a href="#tecnologia">Tecnología</a><a href="#productos">Productos</a><a href="#funcionalidades">Funcionalidades</a><a href="#contacto">Contacto</a>
+    <a href="#tecnologia">Tecnología</a><a href="#productos">Medidores</a><a href="#smart-features">Smart</a><a href="#explora">Explora</a>
   </nav>
 
   <main class="pagina-presentacion">
@@ -29,9 +30,10 @@
     <!-- DESCRIPCIÓN -->
     <section class="seccion seccion-destacada reveal" id="tecnologia">
       <p class="numero-seccion">01 / TECNOLOGÍA</p>
-      <h2>¿Cómo funciona?</h2>
-      <p>MeteRSit integra sensores de alta precisión, comunicación remota y una plataforma de datos para convertir cada medición en información útil.</p>
-      <div class="flujo-tecnologia"><span>Captura</span><b>→</b><span>Comunica</span><b>→</b><span>Analiza</span><b>→</b><span>Actúa</span></div>
+      <h2>Micro Thermal Flow Sensing</h2>
+      <p>El flujo de gas se mide observando cómo cambia la temperatura alrededor de un microcalentador. Sin piezas móviles: una lectura precisa, estable y continua.</p>
+      <div class="flujo-tecnologia"><span>Detecta</span><b>→</b><span>Compara</span><b>→</b><span>Mide</span></div>
+      <div class="thermal-flow" aria-label="Animación del principio de medición térmica"><div class="thermal-flow-line"><span>FLUJO DE GAS</span><i></i><i></i><i></i><strong>→</strong></div><div class="thermal-sensors"><div><span class="sensor-dot"></span><small>Sensor<br>aguas arriba</small></div><div class="micro-heater"><span>🔥</span><small>Micro<br>calor</small></div><div><span class="sensor-dot"></span><small>Sensor<br>aguas abajo</small></div></div><div class="thermal-result"><span>Diferencia de temperatura</span><b>↓</b><strong>Flujo medido</strong></div></div>
       <div class="sensor-demo" aria-label="Demostración visual del sensor MeteRSit">
         <div class="sensor-demo-cabecera">
           <div><span class="simulador-etiqueta">VISTA DEL SENSOR</span><h3>Así se mueve una lectura</h3></div>
@@ -58,10 +60,9 @@
     <section class="seccion reveal" id="productos">
       <p class="numero-seccion">02 / PRODUCTOS</p>
       <h2>Una solución para cada escala</h2>
-      <div class="producto-grid">
-        <article class="producto"><span class="producto-codigo">G1.6</span><h3>Precisión compacta</h3><p>Medición confiable para instalaciones residenciales y pequeños comercios.</p></article>
-        <article class="producto producto-principal"><span class="producto-codigo">G25</span><h3>Rendimiento a gran escala</h3><p>Control inteligente para operaciones que necesitan datos continuos y accionables.</p></article>
-      </div>
+      <p>Selecciona un modelo para consultar sus datos principales.</p>
+      <div class="familia-medidores"><div class="grupo-medidores"><span class="grupo-titulo">Domésticos</span><button class="modelo-medidor activo" type="button" data-modelo="G1.6">G1.6</button><button class="modelo-medidor" type="button" data-modelo="G4">G4</button><button class="modelo-medidor" type="button" data-modelo="G6">G6</button></div><div class="grupo-medidores"><span class="grupo-titulo">Industriales</span><button class="modelo-medidor" type="button" data-modelo="G10">G10</button><button class="modelo-medidor" type="button" data-modelo="G16">G16</button><button class="modelo-medidor" type="button" data-modelo="G25">G25</button></div></div>
+      <div class="ficha-medidor"><div class="ficha-medidor-icon" aria-hidden="true">MS</div><div><span class="simulador-etiqueta">MODELO SELECCIONADO</span><h3 id="modeloSeleccionado">G1.6</h3></div><dl><div><dt>Rango</dt><dd id="rangoModelo">0.016 – 2.5 m³/h</dd></div><div><dt>Clase</dt><dd id="claseModelo">1.5</dd></div><div><dt>Registros</dt><dd id="registrosModelo">72 días</dd></div></dl></div>
     </section>
 
     <!-- SOLUCIÓN -->
@@ -70,9 +71,10 @@
       <h2>Más que medir</h2>
       <p>Una experiencia conectada para entender lo que ocurre y tomar decisiones a tiempo.</p>
       <div class="features-grid">
-        <article><span>01</span><h3>Gestión del consumo</h3><p>Visualiza patrones de consumo y encuentra oportunidades de eficiencia.</p></article>
-        <article><span>02</span><h3>Comunicación inteligente</h3><p>Consulta la información que necesitas de forma clara y oportuna.</p></article>
-        <article><span>03</span><h3>Seguridad</h3><p>Identifica comportamientos inusuales y actúa con mayor confianza.</p></article>
+        <article><span>01 · 📡</span><h3>Comunicación</h3><p>Consulta la información que necesitas de forma clara y oportuna.</p></article>
+        <article><span>02 · 📊</span><h3>Consumo</h3><p>Visualiza patrones y encuentra oportunidades de eficiencia.</p></article>
+        <article><span>03 · 🔐</span><h3>Seguridad</h3><p>Identifica comportamientos inusuales y actúa con mayor confianza.</p></article>
+        <article><span>04 · ⚙</span><h3>Alarmas</h3><p>Recibe señales para responder a tiempo ante cambios importantes.</p></article>
       </div>
       <div class="simulador-consumo" aria-label="Simulador de consumo">
         <div class="simulador-cabecera"><div><span class="simulador-etiqueta">SIMULADOR EN VIVO</span><h3>Explora una lectura</h3></div><span class="pulso-simulador" aria-hidden="true"></span></div>
@@ -84,15 +86,11 @@
       </div>
     </section>
 
-    <section class="seccion reveal" id="funcionalidades">
-      <p class="numero-seccion">04 / CARACTERÍSTICAS</p>
-      <h2>Diseñado para trabajar contigo</h2>
-      <div class="caracteristicas-lista">
-        <div><span>01</span><h3>Datos fáciles de entender</h3><p>Información organizada para que cada lectura se convierta en una decisión.</p></div>
-        <div><span>02</span><h3>Seguimiento continuo</h3><p>Conoce la evolución de tus mediciones y compara el comportamiento.</p></div>
-        <div><span>03</span><h3>Escalable</h3><p>Una propuesta que acompaña desde instalaciones pequeñas hasta operaciones industriales.</p></div>
-        <div><span>04</span><h3>Experiencia simple</h3><p>Menos complejidad técnica para el visitante, el equipo y la operación.</p></div>
-      </div>
+    <section class="seccion seccion-explora reveal" id="explora">
+      <p class="numero-seccion">04 / PRODUCTO INTERACTIVO</p>
+      <h2>Explora el medidor</h2>
+      <p>Selecciona un punto del equipo para conocer su función.</p>
+      <div class="explorador-medidor"><div class="medidor-interactivo" aria-label="Medidor interactivo"><span class="medidor-cuerpo-marca">MeteRSit</span><span class="medidor-pantalla-real">04.82<br><small>m³</small></span><button class="punto-medidor punto-pantalla" type="button" data-detalle="Pantalla">1</button><button class="punto-medidor punto-antena" type="button" data-detalle="Antena">2</button><button class="punto-medidor punto-azul" type="button" data-detalle="Botón azul">3</button><button class="punto-medidor punto-naranja" type="button" data-detalle="Botón naranja">4</button><button class="punto-medidor punto-optico" type="button" data-detalle="Puerto óptico">5</button></div><div class="detalle-medidor"><span class="simulador-etiqueta">PUNTO DEL EQUIPO</span><h3 id="detalleTitulo">Pantalla</h3><p id="detalleTexto">Muestra la lectura actual de consumo de forma clara y directa.</p></div></div>
     </section>
 
     <!-- GALERÍA -->
