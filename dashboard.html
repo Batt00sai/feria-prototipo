@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MeteRSit | Dashboard de visitantes</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="pagina-dashboard">
+    <header class="dashboard-cabecera">
+      <div>
+        <div class="dashboard-marca"><span class="logo-mini">MS</span><span>MeteRSit / Feria 2026</span></div>
+        <p class="eyebrow">Panel privado del equipo</p>
+        <h1>Visitantes registrados</h1>
+        <p>Consulta los datos capturados desde la experiencia QR.</p>
+      </div>
+      <div class="dashboard-acciones">
+        <a class="boton-secundario" href="index.html">Ver experiencia</a>
+        <button class="boton-secundario" type="button" id="exportarCsv">Exportar CSV</button>
+      </div>
+    </header>
+
+    <section class="dashboard-contenido" aria-label="Resumen de visitantes">
+      <div class="dashboard-metricas">
+        <article class="metrica-dashboard"><span>Total visitantes</span><strong id="totalVisitantes">0</strong></article>
+        <article class="metrica-dashboard"><span>Empresas representadas</span><strong id="totalEmpresas">0</strong></article>
+        <article class="metrica-dashboard"><span>Último registro</span><strong id="ultimoRegistro">--</strong></article>
+      </div>
+
+      <section class="panel-registros">
+        <div class="panel-herramientas">
+          <h2>Registro de visitantes</h2>
+          <input class="buscador-dashboard" id="buscadorVisitantes" type="search" placeholder="Buscar nombre, empresa o teléfono" aria-label="Buscar visitantes">
+        </div>
+        <div class="tabla-contenedor">
+          <table class="tabla-registros">
+            <thead>
+              <tr><th>Nombre</th><th>Empresa</th><th>Teléfono</th><th>Fecha y hora</th><th>Acción</th></tr>
+            </thead>
+            <tbody id="tablaVisitantes"></tbody>
+          </table>
+          <p class="estado-vacio" id="estadoVacio">Todavía no hay visitantes registrados.</p>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

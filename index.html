@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MeteRSit | Feria Empresarial 2026</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <main class="pagina-formulario">
+    <div class="tarjeta-formulario animar-entrada" id="bienvenida">
+
+      <div class="logo-eco">MS</div>
+
+      <div class="qr-origen"><span class="qr-marca">▦</span><span>Acceso desde QR</span></div>
+      <span class="etiqueta-feria">FERIA EMPRESARIAL 2026 · STAND 42</span>
+
+      <p class="eyebrow">Tecnología de medición inteligente</p>
+      <h1>Bienvenido a <span class="marca">MeteRSit</span></h1>
+      <p class="subtitulo">Conoce nuestra tecnología y descubre una nueva forma de medir, comunicar y proteger.</p>
+
+      <button type="button" class="boton-principal" id="botonEntrar">Entrar <span aria-hidden="true">→</span></button>
+    </div>
+
+    <div class="tarjeta-formulario animar-entrada etapa-oculta" id="registro">
+      <div class="paso-indicador">01 <span></span> 02</div>
+      <p class="eyebrow">Datos del visitante</p>
+      <h1>Conectemos</h1>
+      <p class="subtitulo">Déjanos tus datos para continuar con la presentación.</p>
+
+      <form id="formularioRegistro" novalidate>
+        <div class="campo">
+          <label for="nombre">Nombre</label>
+          <input type="text" id="nombre" name="nombre" placeholder="Tu nombre completo" autocomplete="name">
+          <span class="error" id="error-nombre"></span>
+        </div>
+
+        <div class="campo">
+          <label for="empresa">Empresa</label>
+          <input type="text" id="empresa" name="empresa" placeholder="Nombre de tu empresa" autocomplete="organization">
+          <span class="error" id="error-empresa"></span>
+        </div>
+
+        <div class="campo">
+          <label for="telefono">Teléfono</label>
+          <input type="tel" id="telefono" name="telefono" placeholder="Ej: 300 123 4567" autocomplete="tel">
+          <span class="error" id="error-telefono"></span>
+        </div>
+
+        <button type="submit" class="boton-principal">Continuar <span aria-hidden="true">→</span></button>
+      </form>
+
+      <p class="nota-privacidad">Tus datos solo se usarán para contactarte después de la feria.</p>
+    </div>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

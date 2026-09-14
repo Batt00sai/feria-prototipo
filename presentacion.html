@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MeteRSit | Tecnología de medición inteligente</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ===== ENCABEZADO / HERO ===== -->
+  <header class="encabezado-presentacion">
+    <div class="barra-superior"><span class="logo-mini">MS</span><span>MeteRSit</span><span class="barra-paso">PRESENTACIÓN · 02</span></div>
+    <div class="hero-contenido">
+      <p class="eyebrow">Medición que mueve decisiones</p>
+      <h1>El futuro se mide <span class="marca">mejor.</span></h1>
+      <p class="subtitulo">Soluciones inteligentes para medir con precisión, comunicar con claridad y proteger lo que importa.</p>
+      <a href="#tecnologia" class="boton-principal boton-hero">Comenzar recorrido <span aria-hidden="true">↓</span></a>
+    </div>
+  </header>
+
+  <!-- ===== CIFRAS DESTACADAS ===== -->
+  <nav class="indice-presentacion" aria-label="Secciones de la presentación">
+    <a href="#tecnologia">Tecnología</a><a href="#productos">Productos</a><a href="#funcionalidades">Funcionalidades</a><a href="#contacto">Contacto</a>
+  </nav>
+
+  <main class="pagina-presentacion">
+
+    <!-- DESCRIPCIÓN -->
+    <section class="seccion seccion-destacada reveal" id="tecnologia">
+      <p class="numero-seccion">01 / TECNOLOGÍA</p>
+      <h2>¿Cómo funciona?</h2>
+      <p>MeteRSit integra sensores de alta precisión, comunicación remota y una plataforma de datos para convertir cada medición en información útil.</p>
+      <div class="flujo-tecnologia"><span>Captura</span><b>→</b><span>Comunica</span><b>→</b><span>Analiza</span><b>→</b><span>Actúa</span></div>
+      <div class="sensor-demo" aria-label="Demostración visual del sensor MeteRSit">
+        <div class="sensor-demo-cabecera">
+          <div><span class="simulador-etiqueta">VISTA DEL SENSOR</span><h3>Así se mueve una lectura</h3></div>
+          <span class="sensor-en-vivo"><i></i> En vivo</span>
+        </div>
+        <div class="sensor-escena">
+          <div class="sensor-modelo" aria-hidden="true">
+            <div class="sensor-cara sensor-frontal">
+              <span class="sensor-marca">MS</span>
+              <span class="sensor-pantalla"><strong id="valorSensor">50</strong><small>kWh</small></span>
+              <span class="sensor-linea"></span>
+              <span class="sensor-puerto"></span>
+            </div>
+            <div class="sensor-cara sensor-lateral"></div>
+            <div class="sensor-cara sensor-superior"></div>
+          </div>
+          <div class="ondas-sensor" aria-hidden="true"><span></span><span></span><span></span></div>
+        </div>
+        <div class="sensor-lectura"><span>Lectura capturada</span><strong><span id="barraSensor"></span></strong><span>Dato enviado a la plataforma</span></div>
+      </div>
+    </section>
+
+    <!-- PROBLEMA -->
+    <section class="seccion reveal" id="productos">
+      <p class="numero-seccion">02 / PRODUCTOS</p>
+      <h2>Una solución para cada escala</h2>
+      <div class="producto-grid">
+        <article class="producto"><span class="producto-codigo">G1.6</span><h3>Precisión compacta</h3><p>Medición confiable para instalaciones residenciales y pequeños comercios.</p></article>
+        <article class="producto producto-principal"><span class="producto-codigo">G25</span><h3>Rendimiento a gran escala</h3><p>Control inteligente para operaciones que necesitan datos continuos y accionables.</p></article>
+      </div>
+    </section>
+
+    <!-- SOLUCIÓN -->
+    <section class="seccion seccion-smart reveal" id="smart-features">
+      <p class="numero-seccion">03 / SMART FEATURES</p>
+      <h2>Más que medir</h2>
+      <p>Una experiencia conectada para entender lo que ocurre y tomar decisiones a tiempo.</p>
+      <div class="features-grid">
+        <article><span>01</span><h3>Gestión del consumo</h3><p>Visualiza patrones de consumo y encuentra oportunidades de eficiencia.</p></article>
+        <article><span>02</span><h3>Comunicación inteligente</h3><p>Consulta la información que necesitas de forma clara y oportuna.</p></article>
+        <article><span>03</span><h3>Seguridad</h3><p>Identifica comportamientos inusuales y actúa con mayor confianza.</p></article>
+      </div>
+      <div class="simulador-consumo" aria-label="Simulador de consumo">
+        <div class="simulador-cabecera"><div><span class="simulador-etiqueta">SIMULADOR EN VIVO</span><h3>Explora una lectura</h3></div><span class="pulso-simulador" aria-hidden="true"></span></div>
+        <p>Ajusta la intensidad de consumo para ver cómo cambia el indicador.</p>
+        <label for="nivelConsumo">Nivel de consumo <strong id="valorConsumo">50%</strong></label>
+        <input id="nivelConsumo" type="range" min="10" max="100" value="50">
+        <div class="barra-consumo"><span id="barraConsumo"></span></div>
+        <div class="resultado-simulador"><div><span>Consumo estimado</span><strong id="consumoEstimado">50 kWh</strong></div><div><span>Ahorro potencial</span><strong id="ahorroPotencial">15%</strong></div><div><span>Estado</span><strong id="estadoConsumo">Equilibrado</strong></div></div>
+      </div>
+    </section>
+
+    <section class="seccion reveal" id="funcionalidades">
+      <p class="numero-seccion">04 / CARACTERÍSTICAS</p>
+      <h2>Diseñado para trabajar contigo</h2>
+      <div class="caracteristicas-lista">
+        <div><span>01</span><h3>Datos fáciles de entender</h3><p>Información organizada para que cada lectura se convierta en una decisión.</p></div>
+        <div><span>02</span><h3>Seguimiento continuo</h3><p>Conoce la evolución de tus mediciones y compara el comportamiento.</p></div>
+        <div><span>03</span><h3>Escalable</h3><p>Una propuesta que acompaña desde instalaciones pequeñas hasta operaciones industriales.</p></div>
+        <div><span>04</span><h3>Experiencia simple</h3><p>Menos complejidad técnica para el visitante, el equipo y la operación.</p></div>
+      </div>
+    </section>
+
+    <!-- GALERÍA -->
+    <section class="seccion conclusion reveal">
+      <p class="numero-seccion">05 / CONCLUSIÓN</p>
+      <h2>Cuando los datos hablan, las decisiones avanzan.</h2>
+      <p>MeteRSit te ayuda a transformar la medición en una ventaja: más control, más eficiencia y más confianza.</p>
+    </section>
+
+    <!-- CONTACTO -->
+    <section class="seccion seccion-contacto reveal" id="contacto">
+      <p class="numero-seccion">06 / CONTACTO</p>
+      <h2>Hablemos de lo que puedes medir.</h2>
+      <p>¿Quieres conocer la solución adecuada para tu operación? Escríbenos:</p>
+      <p>
+        <a href="mailto:hola@metersit.com">hola@metersit.com</a><br>
+        <a href="tel:+573001234567">+57 300 123 4567</a><br>
+        <a href="#">www.metersit.com</a>
+      </p>
+      <a href="index.html" class="boton-principal boton-volver">← Volver al registro</a>
+    </section>
+
+  </main>
+
+  <footer class="pie">
+    <p>MeteRSit — Tecnología de medición inteligente · Feria Empresarial 2026</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
