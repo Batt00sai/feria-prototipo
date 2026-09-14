@@ -6,6 +6,10 @@
   "scripts": {
     "start": "node server.js"
   },
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.848.0",
+    "@aws-sdk/lib-dynamodb": "^3.848.0"
+  },
   "engines": {
     "node": ">=18"
   }

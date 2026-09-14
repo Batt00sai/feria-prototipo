@@ -2,8 +2,14 @@ const http = require("node:http");
 const fs = require("node:fs/promises");
 const path = require("node:path");
 const crypto = require("node:crypto");
+const { DynamoDBClient } = require("@aws-sdk/client-dynamodb");
+const { DeleteCommand, DynamoDBDocumentClient, PutCommand, ScanCommand } = require("@aws-sdk/lib-dynamodb");
 
 const port = Number(process.env.PORT) || 3000;
+const tableName = process.env.DYNAMODB_TABLE;
+const dynamo = tableName
+  ? DynamoDBDocumentClient.from(new DynamoDBClient({ region: process.env.AWS_REGION || "us-east-1" }))
+  : null;
 const publicDir = __dirname;
 const dataDir = path.join(__dirname, "data");
 const dataFile = path.join(dataDir, "visitantes.json");
@@ -18,6 +24,11 @@ const mimeTypes = {
 };
 
 async function leerRegistros() {
+  if (dynamo) {
+    const respuesta = await dynamo.send(new ScanCommand({ TableName: tableName }));
+    return (respuesta.Items || []).sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
+  }
+
   try {
     const registros = JSON.parse(await fs.readFile(dataFile, "utf8"));
     return Array.isArray(registros) ? registros : [];
@@ -29,6 +40,27 @@ async function leerRegistros() {
 async function guardarRegistros(registros) {
   await fs.mkdir(dataDir, { recursive: true });
   await fs.writeFile(dataFile, JSON.stringify(registros, null, 2), "utf8");
+}
+
+async function guardarRegistro(registro) {
+  if (dynamo) {
+    await dynamo.send(new PutCommand({ TableName: tableName, Item: registro }));
+    return;
+  }
+
+  const registros = await leerRegistros();
+  registros.push(registro);
+  await guardarRegistros(registros);
+}
+
+async function eliminarRegistro(id) {
+  if (dynamo) {
+    await dynamo.send(new DeleteCommand({ TableName: tableName, Key: { id } }));
+    return;
+  }
+
+  const registros = await leerRegistros();
+  await guardarRegistros(registros.filter((registro) => String(registro.id) !== id));
 }
 
 function responderJson(respuesta, estado, datos) {
@@ -87,9 +119,7 @@ const servidor = http.createServer(async (peticion, respuesta) => {
       }
 
       const registro = { id: crypto.randomUUID(), nombre, empresa, telefono, fecha: new Date().toISOString() };
-      const registros = await leerRegistros();
-      registros.push(registro);
-      await guardarRegistros(registros);
+      await guardarRegistro(registro);
       responderJson(respuesta, 201, registro);
     } catch (error) {
       responderJson(respuesta, 400, { error: "El registro no es válido" });
@@ -99,8 +129,7 @@ const servidor = http.createServer(async (peticion, respuesta) => {
 
   if (url.pathname.startsWith("/api/visitantes/") && peticion.method === "DELETE") {
     const id = decodeURIComponent(url.pathname.split("/").pop());
-    const registros = await leerRegistros();
-    await guardarRegistros(registros.filter((registro) => String(registro.id) !== id));
+    await eliminarRegistro(id);
     responderJson(respuesta, 204, null);
     return;
   }
