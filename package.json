@@ -1,0 +1,12 @@
+{
+  "name": "metersit-feria",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Experiencia MeteRSit con registro centralizado de visitantes",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

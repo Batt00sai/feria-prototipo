@@ -8,6 +8,33 @@ document.addEventListener("DOMContentLoaded", function () {
   const botonEntrar = document.getElementById("botonEntrar");
   const bienvenida = document.getElementById("bienvenida");
   const registro = document.getElementById("registro");
+  const imagenQr = document.getElementById("imagenQr");
+
+  if (imagenQr) {
+    const imagenQr = document.getElementById("imagenQr");
+    const estadoQr = document.getElementById("estadoQr");
+    const descargarQr = document.getElementById("descargarQr");
+    const hostQr = ["localhost", "127.0.0.1"].includes(window.location.hostname)
+      ? "192.168.100.221"
+      : window.location.hostname;
+    const destino = new URL("./", window.location.href);
+    destino.hostname = hostQr;
+
+    if (!/^https?:$/.test(destino.protocol)) {
+      estadoQr.textContent = "Publica la aplicación para generar el QR compartible.";
+    } else {
+      const urlApi = "https://api.qrserver.com/v1/create-qr-code/?size=600x600&margin=16&data=" + encodeURIComponent(destino.href);
+      imagenQr.src = urlApi;
+      imagenQr.onload = function () {
+        descargarQr.href = urlApi;
+        descargarQr.hidden = false;
+        estadoQr.textContent = "QR único listo para descargar e imprimir.";
+      };
+      imagenQr.onerror = function () {
+        estadoQr.textContent = "No se pudo cargar el QR. Revisa tu conexión a internet.";
+      };
+    }
+  }
 
   if (botonEntrar && bienvenida && registro) {
     botonEntrar.addEventListener("click", function () {
@@ -18,7 +45,7 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   if (formulario) {
-    formulario.addEventListener("submit", function (evento) {
+    formulario.addEventListener("submit", async function (evento) {
       evento.preventDefault(); // Evita el envío tradicional del formulario
 
       const nombre = document.getElementById("nombre").value.trim();
@@ -50,15 +77,27 @@ document.addEventListener("DOMContentLoaded", function () {
 
       // Si todo está completo → redirigir a la presentación
       if (formularioValido) {
-        const registros = JSON.parse(localStorage.getItem("metersitVisitantes") || "[]");
-        registros.push({
+        const registroVisitante = {
           id: Date.now(),
           nombre: nombre,
           empresa: empresa,
           telefono: telefono,
           fecha: new Date().toISOString()
-        });
-        localStorage.setItem("metersitVisitantes", JSON.stringify(registros));
+        };
+
+        try {
+          const respuesta = await fetch("/api/visitantes", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(registroVisitante)
+          });
+          if (!respuesta.ok) throw new Error("No se pudo guardar el registro.");
+        } catch (error) {
+          const registros = JSON.parse(localStorage.getItem("metersitVisitantes") || "[]");
+          registros.push(registroVisitante);
+          localStorage.setItem("metersitVisitantes", JSON.stringify(registros));
+        }
+
         window.location.href = "presentacion.html";
       }
     });
@@ -226,14 +265,36 @@ document.addEventListener("DOMContentLoaded", function () {
     const totalVisitantes = document.getElementById("totalVisitantes");
     const totalEmpresas = document.getElementById("totalEmpresas");
     const ultimoRegistro = document.getElementById("ultimoRegistro");
-    let registros = leerRegistros();
+    let registros = [];
 
-    function leerRegistros() {
+    async function leerRegistros() {
       try {
-        return JSON.parse(localStorage.getItem("metersitVisitantes") || "[]");
+        const respuesta = await fetch("/api/visitantes");
+        if (respuesta.ok) return normalizarRegistros(await respuesta.json());
+      } catch (error) {
+        // Usa los datos locales cuando la página se abre sin servidor.
+      }
+
+      try {
+        const datos = JSON.parse(localStorage.getItem("metersitVisitantes") || "[]");
+        return normalizarRegistros(Array.isArray(datos) ? datos.filter(function (registro) {
+          return registro && typeof registro === "object";
+        }) : []);
       } catch (error) {
         return [];
       }
+    }
+
+    function normalizarRegistros(datos) {
+      return datos.map(function (registro) {
+          return {
+            id: registro.id || Date.now() + Math.random(),
+            nombre: String(registro.nombre || ""),
+            empresa: String(registro.empresa || ""),
+            telefono: String(registro.telefono || ""),
+            fecha: registro.fecha || ""
+          };
+        });
     }
 
     function pintarDashboard() {
@@ -265,23 +326,30 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function formatearFecha(fecha) {
-      return new Intl.DateTimeFormat("es-CO", { dateStyle: "short", timeStyle: "short" }).format(new Date(fecha));
+      const fechaValida = new Date(fecha);
+      return Number.isNaN(fechaValida.getTime())
+        ? "Sin fecha"
+        : new Intl.DateTimeFormat("es-CO", { dateStyle: "short", timeStyle: "short" }).format(fechaValida);
     }
 
     function escaparHtml(valor) {
-      return valor.replace(/[&<>\"']/g, function (caracter) {
+      return String(valor).replace(/[&<>\"']/g, function (caracter) {
         return { "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#039;" }[caracter];
       });
     }
 
     buscador.addEventListener("input", pintarDashboard);
-    tablaVisitantes.addEventListener("click", function (evento) {
+    tablaVisitantes.addEventListener("click", async function (evento) {
       const boton = evento.target.closest("[data-id]");
       if (!boton) return;
       registros = registros.filter(function (registro) {
         return String(registro.id) !== boton.dataset.id;
       });
-      localStorage.setItem("metersitVisitantes", JSON.stringify(registros));
+      try {
+        await fetch("/api/visitantes/" + encodeURIComponent(boton.dataset.id), { method: "DELETE" });
+      } catch (error) {
+        localStorage.setItem("metersitVisitantes", JSON.stringify(registros));
+      }
       pintarDashboard();
     });
 
@@ -300,6 +368,9 @@ document.addEventListener("DOMContentLoaded", function () {
       URL.revokeObjectURL(enlace.href);
     });
 
-    pintarDashboard();
+    leerRegistros().then(function (datos) {
+      registros = datos;
+      pintarDashboard();
+    });
   }
 });

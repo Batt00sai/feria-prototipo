@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MeteRSit | Generar código QR</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="pagina-qr">
+    <section class="panel-qr">
+      <a class="logo-mini" href="dashboard.html" aria-label="Volver al dashboard">MS</a>
+      <p class="eyebrow">Feria Empresarial 2026 · Stand 42</p>
+      <h1>Tu código <span class="marca">QR</span></h1>
+      <p class="subtitulo">Este código único siempre abrirá la experiencia de registro de MeteRSit.</p>
+
+      <div class="resultado-qr" aria-live="polite">
+        <img id="imagenQr" alt="Código QR de la experiencia MeteRSit">
+        <p id="estadoQr">Preparando tu código QR...</p>
+        <a class="boton-secundario" id="descargarQr" download="metersit-qr.png" hidden>Descargar PNG</a>
+      </div>
+    </section>
+  </main>
+  <script src="script.js"></script>
+</body>
+</html>
