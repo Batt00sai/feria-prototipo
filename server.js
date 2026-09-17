@@ -7,12 +7,14 @@ const { DeleteCommand, DynamoDBDocumentClient, PutCommand, ScanCommand } = requi
 
 const port = Number(process.env.PORT) || 3000;
 const tableName = process.env.DYNAMODB_TABLE;
+const sessionSecret = process.env.SESSION_SECRET || crypto.randomBytes(32).toString("hex");
 const dynamo = tableName
   ? DynamoDBDocumentClient.from(new DynamoDBClient({ region: process.env.AWS_REGION || "us-east-1" }))
   : null;
 const publicDir = __dirname;
 const dataDir = path.join(__dirname, "data");
 const dataFile = path.join(dataDir, "visitantes.json");
+const intentosPorIp = new Map();
 const mimeTypes = {
   ".html": "text/html; charset=utf-8",
   ".css": "text/css; charset=utf-8",
@@ -63,9 +65,73 @@ async function eliminarRegistro(id) {
   await guardarRegistros(registros.filter((registro) => String(registro.id) !== id));
 }
 
+function normalizarTelefono(valor) {
+  return String(valor || "").replace(/\D/g, "");
+}
+
+function obtenerIp(peticion) {
+  const encabezado = peticion.headers["x-forwarded-for"] || "";
+  if (encabezado) {
+    return String(encabezado).split(",")[0].trim();
+  }
+
+  return (peticion.socket && peticion.socket.remoteAddress) ? String(peticion.socket.remoteAddress) : "desconocida";
+}
+
+function validarPeticionRegistro({ nombre, empresa, telefono }) {
+  const nombreLimpio = String(nombre || "").trim();
+  const empresaLimpia = String(empresa || "").trim();
+  const telefonoLimpio = normalizarTelefono(telefono);
+
+  if (!nombreLimpio || !empresaLimpia || !telefonoLimpio) {
+    return "Faltan datos obligatorios.";
+  }
+
+  if (telefonoLimpio.length < 10 || telefonoLimpio.length > 15) {
+    return "Ingresa un teléfono válido con 10 a 15 dígitos.";
+  }
+
+  return "";
+}
+
+function bloquearSpamIp(ip) {
+  const ahora = Date.now();
+  const historial = intentosPorIp.get(ip) || [];
+  const recientes = historial.filter((tiempo) => ahora - tiempo < 60000);
+  recientes.push(ahora);
+  intentosPorIp.set(ip, recientes);
+  return recientes.length > 3;
+}
+
 function responderJson(respuesta, estado, datos) {
   respuesta.writeHead(estado, { "Content-Type": "application/json; charset=utf-8" });
   respuesta.end(estado === 204 ? "" : JSON.stringify(datos));
+}
+
+function crearSesion() {
+  const payload = Buffer.from(JSON.stringify({ exp: Date.now() + 30 * 60 * 1000 })).toString("base64url");
+  const firma = crypto.createHmac("sha256", sessionSecret).update(payload).digest("base64url");
+  return `${payload}.${firma}`;
+}
+
+function tieneSesionValida(peticion) {
+  const cookies = String(peticion.headers.cookie || "");
+  const coincidencia = cookies.match(/(?:^|;\s*)metersit_session=([^;]+)/);
+  if (!coincidencia) return false;
+
+  const [payload, firma] = coincidencia[1].split(".");
+  if (!payload || !firma) return false;
+
+  const firmaEsperada = crypto.createHmac("sha256", sessionSecret).update(payload).digest("base64url");
+  if (firma.length !== firmaEsperada.length || !crypto.timingSafeEqual(Buffer.from(firma), Buffer.from(firmaEsperada))) {
+    return false;
+  }
+
+  try {
+    return JSON.parse(Buffer.from(payload, "base64url").toString("utf8")).exp > Date.now();
+  } catch (error) {
+    return false;
+  }
 }
 
 function leerCuerpo(peticion) {
@@ -113,13 +179,36 @@ const servidor = http.createServer(async (peticion, respuesta) => {
       const nombre = String(datos.nombre || "").trim();
       const empresa = String(datos.empresa || "").trim();
       const telefono = String(datos.telefono || "").trim();
-      if (!nombre || !empresa || !telefono) {
-        responderJson(respuesta, 400, { error: "Faltan datos obligatorios" });
+      const ip = obtenerIp(peticion);
+
+      if (bloquearSpamIp(ip)) {
+        responderJson(respuesta, 429, { error: "Demasiados intentos. Intenta nuevamente en unos minutos." });
         return;
       }
 
-      const registro = { id: crypto.randomUUID(), nombre, empresa, telefono, fecha: new Date().toISOString() };
+      const errorValidacion = validarPeticionRegistro({ nombre, empresa, telefono });
+      if (errorValidacion) {
+        responderJson(respuesta, 400, { error: errorValidacion });
+        return;
+      }
+
+      const registros = await leerRegistros();
+      const telefonoNormalizado = normalizarTelefono(telefono);
+      const yaExiste = registros.some((registro) => normalizarTelefono(registro.telefono) === telefonoNormalizado);
+      if (yaExiste) {
+        responderJson(respuesta, 409, { error: "Este teléfono ya fue registrado." });
+        return;
+      }
+
+      const registro = {
+        id: crypto.randomUUID(),
+        nombre,
+        empresa,
+        telefono: telefonoNormalizado,
+        fecha: new Date().toISOString()
+      };
       await guardarRegistro(registro);
+      respuesta.setHeader("Set-Cookie", "metersit_session=" + crearSesion() + "; HttpOnly; SameSite=Lax; Path=/; Max-Age=1800");
       responderJson(respuesta, 201, registro);
     } catch (error) {
       responderJson(respuesta, 400, { error: "El registro no es válido" });
@@ -135,6 +224,11 @@ const servidor = http.createServer(async (peticion, respuesta) => {
   }
 
   if (peticion.method === "GET") {
+    if (url.pathname === "/presentacion.html" && !tieneSesionValida(peticion)) {
+      respuesta.writeHead(302, { Location: "/index.html" });
+      respuesta.end();
+      return;
+    }
     await servirArchivo(url.pathname, respuesta);
     return;
   }

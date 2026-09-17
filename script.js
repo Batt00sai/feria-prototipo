@@ -14,19 +14,25 @@ document.addEventListener("DOMContentLoaded", function () {
     const imagenQr = document.getElementById("imagenQr");
     const estadoQr = document.getElementById("estadoQr");
     const descargarQr = document.getElementById("descargarQr");
-    const hostQr = ["localhost", "127.0.0.1"].includes(window.location.hostname)
-      ? "192.168.100.221"
+ 
+    const hostQr = ["localhost", "127.0.0.1", "0.0.0.0"].includes(window.location.hostname)
+      ? "35.170.67.193"
       : window.location.hostname;
-    const destino = new URL("./", window.location.href);
+
+    const destino = new URL(window.location.origin || "http://35.170.67.193:3000");
+    destino.protocol = "http:";
     destino.hostname = hostQr;
+    destino.port = "3000";
+    destino.pathname = "/";
 
     if (!/^https?:$/.test(destino.protocol)) {
       estadoQr.textContent = "Publica la aplicación para generar el QR compartible.";
     } else {
-      const urlApi = "https://api.qrserver.com/v1/create-qr-code/?size=600x600&margin=16&data=" + encodeURIComponent(destino.href);
+      const urlApi = "https://api.qrserver.com/v1/create-qr-code/?size=600x600&margin=16&format=png&data=" + encodeURIComponent(destino.href);
       imagenQr.src = urlApi;
       imagenQr.onload = function () {
         descargarQr.href = urlApi;
+        descargarQr.download = "metersit-qr.png";
         descargarQr.hidden = false;
         estadoQr.textContent = "QR único listo para descargar e imprimir.";
       };
@@ -51,6 +57,7 @@ document.addEventListener("DOMContentLoaded", function () {
       const nombre = document.getElementById("nombre").value.trim();
       const empresa = document.getElementById("empresa").value.trim();
       const telefono = document.getElementById("telefono").value.trim();
+      const telefonoLimpio = telefono.replace(/\D/g, "");
 
       let formularioValido = true;
 
@@ -71,6 +78,9 @@ document.addEventListener("DOMContentLoaded", function () {
       if (telefono === "") {
         mostrarError("error-telefono", "Por favor ingresa tu teléfono.");
         formularioValido = false;
+      } else if (!/^\d{10,15}$/.test(telefonoLimpio)) {
+        mostrarError("error-telefono", "Ingresa un teléfono válido con 10 a 15 dígitos.");
+        formularioValido = false;
       } else {
         mostrarError("error-telefono", "");
       }
@@ -81,7 +91,7 @@ document.addEventListener("DOMContentLoaded", function () {
           id: Date.now(),
           nombre: nombre,
           empresa: empresa,
-          telefono: telefono,
+          telefono: telefonoLimpio,
           fecha: new Date().toISOString()
         };
 
@@ -91,14 +101,17 @@ document.addEventListener("DOMContentLoaded", function () {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(registroVisitante)
           });
-          if (!respuesta.ok) throw new Error("No se pudo guardar el registro.");
-        } catch (error) {
-          const registros = JSON.parse(localStorage.getItem("metersitVisitantes") || "[]");
-          registros.push(registroVisitante);
-          localStorage.setItem("metersitVisitantes", JSON.stringify(registros));
-        }
 
-        window.location.href = "presentacion.html";
+          if (!respuesta.ok) {
+            const errorData = await respuesta.json().catch(() => ({}));
+            mostrarError("error-telefono", errorData.error || "No se pudo completar el registro.");
+            return;
+          }
+
+          window.location.href = "presentacion.html";
+        } catch (error) {
+          mostrarError("error-telefono", "No se pudo conectar con el servidor. Intenta nuevamente.");
+        }
       }
     });
 
